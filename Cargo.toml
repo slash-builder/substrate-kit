@@ -1,0 +1,36 @@
+[package]
+name = "slashbuilder-substrate-kit"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.88"
+description = "Linux and dockerd substrate for the SlashBuilder Kit ecosystem: container lifecycle, cgroup and mount resolution, and service-principal embodiment"
+repository = "https://github.com/slash-builder/substrate-kit"
+license = "Apache-2.0"
+readme = "README.md"
+keywords = ["docker", "container", "cgroups", "dockerd", "substrate"]
+categories = ["virtualization", "os::linux-apis"]
+# An allow-list, not an exclude: nothing but the library, the docs and the licence can ship by accident.
+include = ["/src/", "/README.md", "/LICENSE", "/CHANGELOG.md"]
+
+# The library keeps the name `substrate_kit` so `use substrate_kit::...` is unchanged for every crate that imports it;
+# only the published package name carries the `slashbuilder-` prefix.
+[lib]
+name = "substrate_kit"
+path = "src/lib.rs"
+
+[dependencies]
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "sync", "process", "fs"] }
+bollard = "0.17"
+futures-util = "0.3"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+tracing = "0.1"
+thiserror = "1.0"
+async-trait = "0.1"
+# The public API returns identity-kit's `ServicePrincipal` verbatim (see `principal.rs`), so this is a real runtime
+# dependency, not a dev-only one. The library is still imported as `identity_kit`.
+slashbuilder-identity-kit = "0.2"
+
+[dev-dependencies]
+tokio = { version = "1", features = ["full", "test-util"] }
+pretty_assertions = "1.4"
