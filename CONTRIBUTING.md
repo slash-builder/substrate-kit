@@ -57,6 +57,8 @@ An unreachable daemon fails these tests instead of skipping them. The tests that
 
 Every pull request runs formatting, clippy, docs, tests on Linux (x86-64 and arm64), macOS and Windows, the minimum-supported-Rust check, `cargo-deny` (advisories, licences, sources), a hygiene check, and a DCO check. The live-Docker tests are not part of CI.
 
+Releases are automated with [release-plz](https://release-plz.dev): pushes to `main` open or update a release pull request that bumps the version and changelog from Conventional Commit titles (`feat:`, `fix:`, a `!` for a breaking change) and checks the bump with `cargo-semver-checks`. Merging that pull request releases the crate: a tag `vX.Y.Z` equal to the crate version, published to crates.io by trusted publishing from a protected environment.
+
 ## Pull request process
 
 1. Fork the repository and create a branch from `main`.
