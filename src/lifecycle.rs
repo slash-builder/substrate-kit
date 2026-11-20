@@ -117,7 +117,10 @@ pub enum RestartPolicy {
     /// Restart unless a human/operator explicitly stopped the container.
     UnlessStopped,
     /// Restart only on a non-zero exit, up to `max_retries` times.
-    OnFailure { max_retries: i64 },
+    OnFailure {
+        /// Maximum number of restart attempts.
+        max_retries: i64,
+    },
 }
 
 impl RestartPolicy {
@@ -146,8 +149,10 @@ impl RestartPolicy {
 /// Transport protocol of a published port.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
 pub enum Protocol {
+    /// TCP (the default).
     #[default]
     Tcp,
+    /// UDP.
     Udp,
 }
 
@@ -169,10 +174,13 @@ impl Protocol {
 /// `PortMapping::tcp(p).with_host_port(p)`.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PortMapping {
+    /// The port inside the container.
     pub container_port: u16,
     /// `None` lets dockerd allocate a free host port.
     pub host_port: Option<u16>,
+    /// The host interface the port is published on. Loopback (`127.0.0.1`) unless changed.
     pub host_ip: IpAddr,
+    /// Transport protocol: TCP unless built with [`PortMapping::udp`].
     pub protocol: Protocol,
 }
 
@@ -196,6 +204,8 @@ impl PortMapping {
         }
     }
 
+    /// Pins the host port instead of letting dockerd allocate one. A 1:1 mapping is
+    /// `PortMapping::tcp(p).with_host_port(p)`.
     pub fn with_host_port(mut self, host_port: u16) -> Self {
         self.host_port = Some(host_port);
         self
@@ -240,6 +250,7 @@ impl PortMapping {
 pub struct ContainerSpec {
     /// Docker container name — must be unique per host.
     pub name: String,
+    /// Image reference to run, for example `alpine:3`.
     pub image: String,
     /// Environment variables. **Not a credential channel**: values are
     /// visible to `docker inspect`. See the module doc.
@@ -247,7 +258,9 @@ pub struct ContainerSpec {
     /// Override the image's own `ENTRYPOINT`/`CMD`. `None` leaves the
     /// image's own default command untouched.
     pub cmd: Option<Vec<String>>,
+    /// Container labels, as with `docker run --label`.
     pub labels: HashMap<String, String>,
+    /// What dockerd does when the container exits. [`RestartPolicy::Never`] by default.
     pub restart_policy: RestartPolicy,
     /// Ports to publish to the host. Empty publishes nothing.
     pub ports: Vec<PortMapping>,
@@ -279,6 +292,8 @@ impl std::fmt::Debug for ContainerSpec {
 }
 
 impl ContainerSpec {
+    /// A spec for the container `name` running `image`: no environment, no command override,
+    /// no labels, no ports, no volumes, the default restart policy and the default network.
     pub fn new(name: impl Into<String>, image: impl Into<String>) -> Self {
         Self {
             name: name.into(),
@@ -293,21 +308,25 @@ impl ContainerSpec {
         }
     }
 
+    /// Replaces the environment variables. Not a credential channel; see the module doc.
     pub fn with_env(mut self, env: HashMap<String, String>) -> Self {
         self.env = env;
         self
     }
 
+    /// Overrides the image's own command.
     pub fn with_cmd(mut self, cmd: Vec<String>) -> Self {
         self.cmd = Some(cmd);
         self
     }
 
+    /// Replaces the labels.
     pub fn with_labels(mut self, labels: HashMap<String, String>) -> Self {
         self.labels = labels;
         self
     }
 
+    /// Sets the restart policy.
     pub fn with_restart_policy(mut self, policy: RestartPolicy) -> Self {
         self.restart_policy = policy;
         self

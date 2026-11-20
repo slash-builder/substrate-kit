@@ -6,6 +6,9 @@
 //! Linux is the supported platform. The crate compiles elsewhere, but cgroup and mount-namespace resolution read
 //! the Linux `/proc` filesystem. See the README for scope and status.
 
+#![forbid(unsafe_code)]
+#![deny(missing_docs)]
+
 pub mod cgroup;
 pub mod error;
 pub mod lifecycle;
