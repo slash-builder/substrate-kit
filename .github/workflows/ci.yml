@@ -49,6 +49,20 @@ jobs:
       # The live-Docker tests are #[ignore]d: no runner needs a daemon. See CONTRIBUTING.md to run them.
       - run: cargo test --locked
 
+  # The #[ignore]d live tests need a real Docker daemon. ubuntu-24.04 runners have one. Linux only (the
+  # embodiment test is compiled on Linux only). Not meant to be a required check: image pulls come from
+  # Docker Hub and can be rate limited. Run once by hand on 2026-11-19: 9 + 1 tests passed.
+  live-docker:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - run: rustup toolchain install stable --profile minimal
+      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
+      - run: cargo test --locked --lib -- --ignored --test-threads=1
+      - run: cargo test --locked --test embodiment_live -- --ignored --test-threads=1
+
   msrv:
     runs-on: ubuntu-24.04
     steps:
