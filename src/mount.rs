@@ -87,7 +87,10 @@ const FORBIDDEN_DRIVER_OPTION_KEYS: [&str; 3] = ["device", "o", "type"];
 /// A volume-plugin driver selection for a [`VolumeMount`].
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct VolumeDriver {
+    /// Driver name.
     pub name: String,
+    /// Driver options. The keys `device`, `o` and `type` (compared case-insensitively) are
+    /// rejected with [`SubstrateError::InvalidSpec`], because they can name a host path or mount type.
     pub options: HashMap<String, String>,
 }
 
@@ -102,6 +105,7 @@ impl VolumeMount {
         }
     }
 
+    /// Mounts the volume read-only.
     pub fn read_only(mut self) -> Self {
         self.read_only = true;
         self

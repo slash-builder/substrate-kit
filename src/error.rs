@@ -9,9 +9,11 @@ use thiserror::Error;
 #[derive(Debug, Error)]
 #[non_exhaustive]
 pub enum SubstrateError {
+    /// A capability that is not implemented in this release; the payload names what is missing.
     #[error("not implemented: {0}")]
     NotImplemented(&'static str),
 
+    /// An I/O operation failed, for example reading a `/proc` file.
     #[error("io: {0}")]
     Io(#[from] std::io::Error),
 
