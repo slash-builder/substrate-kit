@@ -1,6 +1,6 @@
 [package]
 name = "slashbuilder-substrate-kit"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 rust-version = "1.88"
 description = "Linux and dockerd substrate for the SlashBuilder Kit ecosystem: container lifecycle, cgroup and mount resolution, and service-principal embodiment"
