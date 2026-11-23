@@ -8,6 +8,17 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.1.1](https://github.com/slash-builder/substrate-kit/compare/v0.1.0...v0.1.1) - 2026-11-23
+
+### Fixed
+
+- *(deps)* update url to 2.5.9 (RUSTSEC-2026-0592) ([#9](https://github.com/slash-builder/substrate-kit/pull/9))
+
+### Other
+
+- document the public API; forbid unsafe code ([#6](https://github.com/slash-builder/substrate-kit/pull/6))
+- *(deps)* Bump thiserror from 1.0.69 to 2.0.21 ([#4](https://github.com/slash-builder/substrate-kit/pull/4))
+
 First public release. Status is alpha: `lifecycle`, `cgroup` (read-only), `mount` and
 `principal` are real; `socket` is a stub with a design note.
 
